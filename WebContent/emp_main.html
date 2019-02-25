@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html ng-app="empApp">
+<head>
+<meta charset="utf-8">
+<title>员工列表页</title>
+</head>
+<body ng-controller="empCtrl">
+<h1>欢迎{{username}}!</h1>
+	<ul>
+		<li ng-repeat="emp in emps">
+			<p>empno:{{emp.empno}}</p>
+			<p>ename:{{emp.ename}}</p>
+			<p>sal:{{emp.sal}}</p>
+			<hr />
+		</li>
+	</ul>
+<hr/>
+<a href="#">添加新员工</a>
+<hr/>
+
+<select ng-model="queryType">
+	<option value="empno">员工编号</option>
+	<option value="ename">员工姓名（模糊查询）</option>
+</select>
+<input type="text" ng-model="queryCon">
+<button id="queryBtn">查询</button>
+
+<script src="https://cdn.bootcss.com/angular.js/1.7.5/angular.min.js"></script>
+<script src="https://cdn.bootcss.com/angular.js/1.7.5/angular-route.min.js"></script>
+<script type="text/javascript">
+	var app = angular.module("empApp",['ngRoute']);
+	app.config(['$routeProvider',function($routeProvider){
+		
+	}]);
+	app.controller("empCtrl",['$scope','$http',function($scope,$http){
+		$scope.username = sessionStorage.username;
+		$http.get("http://localhost:8080/HRMP/EmpFindAllServlet").then(function(res){
+//		$http.get("json/emps.json").then(function(res){
+			console.log(res);	
+			$scope.emps = res.data.data;
+		},function(err){
+			sessionStorage.errCode = "404";
+			sessionStorage.errMsg =  "findall error!";
+			window.location.href = "http://localhost:8080/HRMP/error.html";
+		});//promise
+	}]);
+</script>
+</body>
+</html>
